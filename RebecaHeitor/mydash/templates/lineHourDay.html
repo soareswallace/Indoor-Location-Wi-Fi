@@ -1,0 +1,11 @@
+<div id="my-line-chart"></div>
+<script>
+  Morris.Line({
+    element: 'my-line-chart',
+    parseTime: false,
+    data:  data[0],
+    xkey: 'hora',
+    ykeys: ['value'],
+    labels: ['Total de visitas']
+  });            
+</script>

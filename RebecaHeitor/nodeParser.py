@@ -1,0 +1,604 @@
+# Codigo Versao 0.1 -- 17h05 7 de Fev Dudu
+
+#!/usr/bin/python
+
+#airodump parsing lib
+
+#returns in an array of client and Ap information
+
+#part of the airdrop-ng project
+
+import pymongo
+
+import time
+
+import datetime
+
+from pymongo import MongoClient
+
+from sys import exit as Exit
+
+import subprocess
+
+import requests
+
+import socket
+
+import sys
+
+
+
+file = open("manufacturer.txt", "w")
+
+
+
+class airDumpParse:
+
+
+
+    def parser(self,file,db,dict_manu):
+
+        """
+
+        One Function to call to parse a file and return the information
+
+        """
+
+        fileOpenResults = self.airDumpOpen(file)
+
+        parsedResults   = self.airDumpParse(fileOpenResults)
+
+        capr        = self.clientApChannelRelationship(parsedResults)
+
+        rtrnList    = [self.jsonOut(parsedResults,db,dict_manu)]
+
+        return rtrnList
+
+        # return parsedResults
+
+
+
+
+
+
+
+    def findESSID(self, bssid, aplist):
+
+        if bssid != 'null':
+
+            for key in (aplist):
+
+                if key == bssid:
+
+                    ap = aplist[key]
+
+                    if ap['essid']=='':
+
+                        return bssid
+
+                    else:
+
+                        return ap['essid']
+
+        return bssid
+
+
+
+    def diffTime(self, data1, data2):
+
+        totalseg1 = int(data1[6:]) + int(data1[3:5])*60 + int(data1[:2])*3600 #entrada nova do aircrack
+
+        totalseg2 = int(data2[6:]) + int(data2[3:5])*60 + int(data2[:2])*3600
+
+        if (totalseg1-totalseg2<20):
+
+            return 1
+
+        else:
+
+            return 0
+
+
+
+    def jsonOut(self, data,db,dict_manu):
+
+        clients = data[0]
+
+        AP = data[1]
+
+        NA = [] #create a var to keep the not associdated clients
+
+        NAP = [] #create a var to keep track of associated clients to AP's we cant see
+
+        apCount = {} #count number of Aps dict is faster the list stored as BSSID:number of essids
+
+        apClient = {} #dict that stores bssid and clients as a nested list
+
+        
+
+        c=1
+
+        # print(len(clients))
+
+
+
+        for key in (clients):
+
+            mac = clients[key] #mac is the MAC address of the client
+
+           
+
+            power = mac['power'][1:]
+
+            
+
+            if mac['probe'][0]=='':
+
+                mac['probe']=['null']
+
+            
+
+
+
+            rede_atual = mac['bssid']
+
+            if rede_atual =='(notassociated)':
+
+                rede_atual = 'null'
+
+
+
+            mac = mac['station']
+
+
+
+            essid = self.findESSID(rede_atual,AP)
+
+           
+
+            id_mongo = {}
+
+            # raw_input()
+
+           
+
+           
+
+                #print "inseriu: ", mac
+
+                #print mac[:2]+""+mac[3:5]+""+mac[6:8]
+
+
+
+            manufacturer = dict_manu.get(mac[:2]+mac[3:5]+mac[6:8])
+
+
+
+            if manufacturer is None:
+
+                manufacturer="UNKNOWN"
+
+
+
+            file.write(manufacturer+"\n")
+
+
+
+            if manufacturer == "Espressif Inc.":   
+
+                try: 
+
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                except socket.error, msg:
+
+                    print 'Fail' + str(msg[0])
+
+                    sys.exit()
+
+
+
+                print 'Socket Created'
+
+                #host = '192.168.2.1'
+		#MEXI NISSO PARA FAZER MEU LINUX SER SERVIDOR
+		host = '10.42.0.1'
+                port = 8125
+
+		from socketIO_client import SocketIO, LoggingNamespace
+
+		with SocketIO('10.42.0.1', 3000, LoggingNamespace) as socketIO:
+
+                #s.connect((host, port))
+
+                	ts = time.time()
+
+                	timeSent = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+
+
+                	message = mac +';ap2;'+ power + ';' + timeSent +';' + manufacturer
+
+                	ap = str(1)
+
+               #message = "POTENCIA " + power
+
+                try:
+
+                    #s.sendall(message)
+		   socketIO.emit('comando', message)
+                   # db.device.insert({'stationMac':mac,'ap':'1','power':power,'currentApBSSID':rede_atual, 'riotId':'1','manufacturer':manufacturer})
+
+                except socket.error:
+
+                    print 'Send Fail'
+
+                    sys.exit()
+
+
+
+                print 'message sent'
+
+                
+
+        return clients
+
+
+
+    def airDumpOpen(self,file):
+
+        """
+
+        Takes one argument (the input file) and opens it for reading
+
+        Returns a list full of data
+
+        """
+
+        try:
+
+            openedFile = open(file, "r")
+
+        except IOError:
+
+            print "Error Airodump File",file,"does not exist"
+
+            Exit(1)
+
+        data = openedFile.xreadlines()
+
+        cleanedData = []
+
+        for line in data:
+
+            cleanedData.append(line.rstrip())
+
+        openedFile.close()
+
+        return cleanedData
+
+    
+
+    def airDumpParse(self,cleanedDump):
+
+        """
+
+        Function takes parsed dump file list and does some more cleaning.
+
+        Returns a list of 2 dictionaries (Clients and APs)
+
+        """
+
+        try: #some very basic error handeling to make sure they are loading up the correct file
+
+            try:
+
+                apStart = cleanedDump.index('BSSID, First time seen, Last time seen, Channel, Speed, Privacy, Power, # beacons, # data, LAN IP, ESSID')
+
+            except Exception:
+
+                apStart = cleanedDump.index('BSSID, First time seen, Last time seen, channel, Speed, Privacy, Cipher, Authentication, Power, # beacons, # IV, LAN IP, ID-length, ESSID, Key')
+
+            del cleanedDump[apStart] #remove the first line of text with the headings
+
+            try:
+
+                stationStart = cleanedDump.index('Station MAC, First time seen, Last time seen, Power, # packets, BSSID, Probed ESSIDs')
+
+            except Exception:
+
+                stationStart = cleanedDump.index('Station MAC, First time seen, Last time seen, Power, # packets, BSSID, ESSID')
+
+        except Exception:
+
+            print "You Seem to have provided an improper input file please make sure you are loading an airodump txt file and not a pcap"
+
+            Exit(1)
+
+    
+
+        del cleanedDump[stationStart] #Remove the heading line
+
+        clientList = cleanedDump[stationStart:] #Splits all client data into its own list
+
+        del cleanedDump[stationStart:] #The remaining list is all of the AP information
+
+        apDict = self.apTag(cleanedDump)
+
+        clientDict = self.clientTag(clientList)
+
+        resultDicts = [clientDict,apDict] #Put both dictionaries into a list
+
+        return resultDicts
+
+    
+
+    def apTag(self,devices):
+
+        """
+
+        Create a ap dictionary with tags of the data type on an incoming list
+
+        """
+
+        dict = {}
+
+        for entry in devices:
+
+            ap = {}
+
+            string_list = entry.split(',')
+
+            #sorry for the clusterfuck but i swear it all makse sense this is builiding a dic from our list so we dont have to do postion calls later
+
+            len(string_list)
+
+            if len(string_list) == 15:
+
+                ap = {"bssid":string_list[0].replace(' ',''),
+
+                    "fts":string_list[1],
+
+                    "lts":string_list[2],
+
+                    "channel":string_list[3].replace(' ',''),
+
+                    "speed":string_list[4],
+
+                    "privacy":string_list[5].replace(' ',''),
+
+                    "cipher":string_list[6],
+
+                    "auth":string_list[7],
+
+                    "power":string_list[8],
+
+                    "beacons":string_list[9],
+
+                    "iv":string_list[10],
+
+                    "ip":string_list[11],
+
+                    "id":string_list[12],
+
+                    "essid":string_list[13][1:],
+
+                    "key":string_list[14]}
+
+            elif len(string_list) == 11:
+
+                ap = {"bssid":string_list[0].replace(' ',''),
+
+                    "fts":string_list[1],
+
+                    "lts":string_list[2],
+
+                    "channel":string_list[3].replace(' ',''),
+
+                    "speed":string_list[4],
+
+                    "privacy":string_list[5].replace(' ',''),
+
+                    "power":string_list[6],
+
+                    "beacons":string_list[7],
+
+                    "data":string_list[8],
+
+                    "ip":string_list[9],
+
+                    "essid":string_list[10][1:]}
+
+            if len(ap) != 0:
+
+                dict[string_list[0]] = ap
+
+        return dict
+
+    
+
+    def clientTag(self,devices):
+
+        """
+
+        Create a client dictionary with tags of the data type on an incoming list
+
+        """
+
+        dict = {}
+
+        for entry in devices:
+
+            client = {}
+
+            string_list = entry.split(',')
+
+            if len(string_list) >= 7:
+
+                client = {"station":string_list[0].replace(' ',''),
+
+                    "fts":string_list[1],
+
+                    "lts":string_list[2],
+
+                    "power":string_list[3],
+
+                    "packets":string_list[4],
+
+                    "bssid":string_list[5].replace(' ',''),
+
+                    "probe":string_list[6:][0:]}
+
+            if len(client) != 0:
+
+                dict[string_list[0]] = client
+
+        return dict
+
+    
+
+    def clientApChannelRelationship(self,data):
+
+        """
+
+        parse the dic for the relationships of client to ap
+
+        """
+
+        clients = data[0]
+
+        AP = data[1]
+
+        NA = [] #create a var to keep the not associdated clients
+
+        NAP = [] #create a var to keep track of associated clients to AP's we cant see
+
+        apCount = {} #count number of Aps dict is faster the list stored as BSSID:number of essids
+
+        apClient = {} #dict that stores bssid and clients as a nested list
+
+        for key in (clients):
+
+            mac = clients[key] #mac is the MAC address of the client
+
+            if mac["bssid"] != ' (notassociated) ': #one line of of our dictionary of clients
+
+                if AP.has_key(mac["bssid"]): # if it is check to see its an AP we can see and have info on
+
+                    if apClient.has_key(mac["bssid"]): 
+
+                        apClient[mac["bssid"]].extend([key]) #if key exists append new client
+
+                    else: 
+
+                        apClient[mac["bssid"]] = [key] #create new key and append the client
+
+                else: NAP.append(key) # stores the clients that are talking to an access point we cant see
+
+            else: NA.append(key) #stores the lines of the not assocated AP's in a list
+
+        return apClient
+
+
+
+
+
+if __name__ == "__main__":
+
+
+
+    banco_riot = "riotdb"
+
+    
+
+    inputfile = open("oui.txt","r")
+
+    data = inputfile.read()
+
+    entries = data.split("\n\n")[1:-1]
+
+    dict_manu = {}
+
+    for entry in entries:
+
+        parts = entry.split("\n")[1].split("\t")
+
+        company_id = parts[0].split()[0]
+
+        company_name = parts[-1]
+
+        dict_manu[company_id] = company_name
+
+
+
+ #   ip = raw_input("Digite o ip ou localhost para local: ")
+
+
+
+  #  if(ip == "localhost"):
+
+  #     connection_riot = MongoClient()
+
+    
+
+  #  else:
+
+  #      connection_riot = MongoClient(ip, 8125)
+
+   # connection_riot = MongoClient('192.168.2.1', 8125) 
+#MEXI NISSO PARA FAZER MEU LINUX SER SERVIDOR 
+    connection_riot = MongoClient('10.42.0.1', 8125)   
+
+    riotdb = connection_riot[banco_riot]
+
+    device = riotdb['device']
+
+    removeCommandLine = "rm field-01.csv"
+
+    remove = subprocess.Popen(removeCommandLine,stdout=subprocess.PIPE,shell=True)
+
+    # usuarioNome = "riotdb"
+
+    # connection = MongoClient()
+
+    # db = connection.riotdb
+
+    # p = airDumpParse()
+
+    # p.parser("tt.csv-01.csv",riotdb)
+
+    while(True):
+
+        airoCommandLine = "airodump-ng wlan0mon --write field --output-format csv"
+
+        airodump = subprocess.Popen("exec " + airoCommandLine,stdout=subprocess.PIPE,shell=True)
+
+        #cria um csv com os infos dos devices scaneados
+
+
+
+        time.sleep(15)
+
+
+
+        airodump.terminate()
+
+        airodump.kill()
+
+
+
+        p = airDumpParse()
+
+
+
+        p.parser("field-01.csv",riotdb,dict_manu)
+
+
+
+        removeCommandLine = "rm field-01.csv"
+
+        remove = subprocess.Popen(removeCommandLine,stdout=subprocess.PIPE,shell=True)
+
+        # print "cabou"
+
+        # raw_input()

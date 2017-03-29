@@ -1,0 +1,66 @@
+ {% include "base.html" %}
+
+<body>
+    <div id="painel-reload">
+    <div id="wrapper">
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Dados sobre {{plot.nome}} {{plot.mac}} <small>{{plot.fabricante}}</small>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <i class="fa fa-dashboard"></i>  <a href="/visitors/">Dashboard</a>
+                            </li>
+                            <li class="active">
+                                <i class="fa fa-file"></i> Dados sobre MAC
+                            </li>
+                            
+                        </ol>
+                    </div>
+                </div>
+
+    <div id="page-Alldatas">
+        <div id="page-macData">
+                {% include "macDatas.html" %}
+        </div>
+        <div id="page-friend">
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+</script>
+ <script >
+     $(document).ready(function() {
+        var url_mac = "{{plot.mac}}"
+        var url_all ="http://localhost:8080/"
+        $.ajax({
+            type:"GET",
+            url: url_all.concat(url_mac),
+            global: false,
+            success: function (data) {
+                var lista = data.split(" ")
+                for (i=0;i<lista.length;i++){
+                    lista[i] =lista[i].replace(/[^A-Z0-9a-z]/ig,'');
+                }
+                console.log("lista: ")
+                console.log(lista)
+                load_friend(lista)
+            },
+            error: function(data) {
+                console.log("Something went wrong!");
+            }
+        });
+    });
+ </script>
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,165 @@
+ <div class="row">
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-check-square-o fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{plot.totalVisitas}}</div>
+                        <div>Total de Visitas</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-yellow">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-clock-o fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{plot.tempo_medio}}</div>
+                        <div>Tempo Médio nas visitas</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</br>
+    <div class="col-lg-6 col-md-12">
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa  fa-wifi  fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">{{totalNew}}</div>
+                                <div>Redes Acessadas</div>
+                            </div>
+                        </div>
+            </div>
+            <div style="max-height:230px; overflow:auto;">
+            {% for rede in plot.redes %}
+                <a >
+                        <span class="pull-left" style="color: green">{{rede}}</span>
+                        <span class="pull-right"><i class="fa fa-wifi fa-2x" style="color: green"></i></span>
+                        <div class="clearfix"></div>
+                </a>
+            </br>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-pencil fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div>Deseja inserir um gênero e um nome?</div>
+                                <form action="http://www.mydomain.com/myformhandler.cgi" method="post">
+
+                                    {% csrf_token %}
+                                    {{ form.non_field_errors }}
+                                    <div class="fieldWrapper">
+
+                                        {{ form.nomeMac.errors }}
+                                        <div style="color:#151313;">
+                                        <select id="mydropdown">
+                                        <option  value="" style="color: black"></option>
+                                        <option value="Masculino" style="color: black">Masculino</option>
+                                        <option value="Feminino" style="color: black">Feminino</option>
+                                        </select>
+                                        <label id="id_nomeMac"></label>
+                                        <input type="text" id="id_nome">
+                                        {{ form.nomeMac }}
+                                        </div>
+                                    <button type="submit" id="addname" class="btn btn-xs btn-default">Inserir</button>
+                                     </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa  fa-group  fa-5x"></i>
+                            </div>
+                            <a href="http://localhost:7474/browser/" target="_blank" id="teste">
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"></div>
+                                 <div>Amigos</div>
+                            </div>
+                        </div>
+                        </a>
+            </div>
+            <div style="max-height:230px; overflow:auto;">
+            {% for amigo in plot.amigos %}
+                <a href="/showMac/{{amigo}}">
+                        <span class="pull-left" style="color: info">{{amigo}}</span>
+                        <span class="pull-right"><i class="fa fa-group fa-2x" style="color: info"></i></span>
+                        <div class="clearfix"></div>
+                </a>
+            </br>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+           $("#addname").click(function(event){
+                event.preventDefault();
+                setHeader()
+                $.ajax({
+                     type:"POST",
+                     url:"/visitors/postName/",
+                     global: false,
+                     data: {'myMAC' : "{{plot.mac}}",
+                            'myName' : $("#id_nome").val(),
+                            'mygender': $("#mydropdown").val()},
+                     dataType: "json",
+                     success: function(data){
+                         if(data.status == 1){
+                            var aux = "{{plot.mac}}/"
+                            console.log(aux)
+                            var ur = "/showMac/"
+                            window.location.href = ur.concat(aux)
+                            console.log("ok")
+                         }
+                     }
+                });
+            return false;
+           });
+
+    });
+    $(document).ready(function() {
+           $("#teste").click(function(event){
+                event.preventDefault();
+                mac = "{{plot.mac}}";
+                mac = mac.toLowerCase();
+                aux = "MATCH (n{mac:'"
+                comando = "MATCH (n{mac:'".concat(mac)
+                comando = comando.concat("'})--(x) RETURN n,x")
+                if(prompt("Copie o texto abaixo para usar na visualização dos amigos",comando) != null){
+                    window.open(href="http://localhost:7474/browser/")
+                }
+           });
+
+    });
+</script>

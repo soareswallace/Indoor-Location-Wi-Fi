@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="shortcut icon" type="image/png" href="http://www.sibia.co.in/images/3.png"/>
+        <title>Retail Analytics</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="/static/css/sb-admin.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+
+            <!-- /#wrapper -->
+
+        <!-- jQuery -->
+        <script src="/static/js/jquery.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="/static/js/bootstrap.min.js"></script>
+
+        <!-- Morris Charts JavaScript -->
+        <script src="/static/js/plugins/morris/raphael.min.js"></script>
+        <script src="/static/js/plugins/morris/morris.min.js"></script>
+        <script src="/static/js/plugins/morris/morris-data.js"></script>
+
+        <!-- Flot Charts JavaScript -->
+        <!--[if lte IE 8]><script src="js/excanvas.min.js"></script><![endif]-->
+        <script src="/static/js/plugins/flot/jquery.flot.js"></script>
+        <script src="/static/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+        <script src="/static/js/plugins/flot/jquery.flot.resize.js"></script>
+        <script src="/static/js/plugins/flot/jquery.flot.pie.js"></script>
+        <script src="/static/js/plugins/flot/flot-data.js"></script>
+          <!--  <script src="/static/js/SPA.js"></script> -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+
+ <!-- 
+        <script src="/static/js/plugins/highcharts/highcharts.js"></script>
+        <script src="/static/js/plugins/highcharts/highcharts-3d.js"></script>
+        <script src="/static/js/plugins/highcharts/exporting.js"></script>
+        <script src="/static/js/plugins/highcharts/highchartsSetup.js"></script>
+        <script src="/static/js/plugins/highcharts/no-data-to-display.js"></script>-->
+
+        <script type="text/javascript">
+            function getPage(url, content_id, container_id, functions, parameters){
+                $.ajax({
+                    type: "GET",
+                    global: false,
+                    url: url,
+                    success: function (data) {
+                        renderPage(data, content_id, container_id, functions, parameters);          
+                    },
+                    error: function(data) {
+                        $("#content-wrapper").html("Something went wrong!");
+                    }
+                });
+            }
+
+            function postPage(url, form_id, container_id, functions, parameters){
+                if (event.handled !== true) {
+                    event.handled = true;
+                
+                    var formData = new FormData($(form_id)[0]);
+                    setHeader();
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        async: false,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        global:false,
+                        success: function (data) {
+                            renderPage(data, form_id, container_id, functions, parameters);
+                        },
+                        error: function(data) {
+                            $("#form").html("Something went wrong!");
+                        }
+                    });
+                }
+                return false;
+            }
+
+            function  renderPage(data, content_id, container_id, functions, parameters){
+                var content = null;
+                if(content_id){
+                    content = $(data).find(content_id);
+                }else{
+                    content = data;
+                }
+                if(container_id){
+                    $(container_id).html(content);
+                }else{
+                    $("#page-content").html(content);
+                }
+
+                for (var i = 0; i < functions.length; i++) {
+                    if(functions[i]){
+                        functions[i].apply(this,parameters[i]);
+                    }
+                };
+            }
+
+            function requestData(url, data, return_function){
+                $.ajax({
+                    type: "GET",
+                    global: false,
+                    url: url,
+                    data: data,
+                    success: function (data) {
+                        return_function(data);   
+                    },
+                    error: function(data) {
+                        console.log("Something went wrong!");
+                    }
+                });
+            }
+
+            function submitData(method, url, data, functions, parameters){
+                if (event.handled !== true) {
+                    event.handled = true;
+                
+                    setHeader();
+                    $.ajax({
+                        type: method,
+                        global: false,
+                        url: url,
+                        data: data,
+                        success: function (data) {
+                            for (var i = 0; i < functions.length; i++) {
+                                if(functions[i]){
+                                    functions[i].apply(this,parameters[i]);
+                                }
+                            };
+                        },
+                        error: function(data) {
+                            console.log("Something went wrong!");
+                        }
+                    });
+                }
+                return false;
+            }
+
+            // Settings the CSRF_token as header of the request
+            function setHeader(){
+                $.ajaxSetup({ 
+                    beforeSend: function(xhr, settings) {
+                        function getCookie(name) {
+                            var cookieValue = null;
+                            if (document.cookie && document.cookie != '') {
+                                var cookies = document.cookie.split(';');
+                                for (var i = 0; i < cookies.length; i++) {
+                                    var cookie = jQuery.trim(cookies[i]);
+                                    // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break
+                                }
+                            }
+                        }
+                        return cookieValue;
+                        }
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                            // Only send the token to relative URLs i.e. locally.
+                            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                    } 
+                });
+            }
+            function clickHome(){
+                    getPage('/core/',null,null,[],[]);
+                }
+            function clickmyTable(mac,ano,mes){
+                url = "/mac_dash/"
+                getPage(url.concat(argument),null,null,[],[]);
+            }
+            function clickforHour(argument){
+                url = "/visitors/donutcharts/"
+                getPage(url.concat(argument),null,"#page-hour",[],[]);
+            }
+            function clickforVendas(initial, fim){
+                url = "/visitors/periodVendas/"
+                argument = initial+":"+fim
+                getPage(url.concat(argument),null,"#page-period",[],[]);
+            }
+            function clickforYear(argument){
+                 url = "/visitors/barcharts/"
+                getPage(url.concat(argument),null,"#page-year",[],[]);
+            }
+            function clickforPeriod(initial, fim, tipoBusca){
+                url = "/visitors/periodCharts/"
+                argument = initial+":"+fim+":"+tipoBusca
+                getPage(url.concat(argument),null,"#page-period",[],[]);
+            }
+            function clickmacDatas(mac, dia, mes, ano){
+                url = "/showMac/showMacDatas/"
+                argument = mac+":"+dia+"/"+mes+"/"+ano
+                getPage(url.concat(argument),null,"#page-macData",[],[]);
+            }
+            function clickmacTable(mac, dia, mes, ano){
+                url = "/showMac/showTableMonth/"
+                argument = mac+":"+dia+"/"+mes+"/"+ano
+                getPage(url.concat(argument),null,"#page-tableMonth",[],[]);
+            }
+            function clickaddName(mac, name)
+            {
+                console.log(mac);
+                console.log(name);
+            }
+            function activate_loading(){
+                getPage("/loadgif/",null,"#page-period",[],[]);
+            }
+            function load_friend(lista){
+                console.log("ALOU")
+                url = "/friend/"
+                getPage(url.concat(lista),null,"#page-friend",[],[]);
+            }
+            function teste(){
+                $.ajax({
+                    type: "GET",
+                    global: false,
+                    url: "http://httpbin.org/ip",   
+                    
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function(data) {
+                        console.log("Something went wrong!");
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body ng-app="Dashboard">
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Our Website Content Goes Here -->
+        <div id="wrapper">
+            {% include "navigation.html" %}
+        </div>
+        <!-- <div id="loading_div" class="my_modal hidden"> alo</div> -->
+        <div class="container">
+             {% block content %}
+             {% endblock content %}
+        </div>
+        <!-- <div id="loading_div" class="my_modal modal-z-index hidden"></div> -->
+        <!-- <script type="text/javascript">
+           // getPage('/home/',null,null,[],[]);
+         </script> -->
+    </body>
+</html>

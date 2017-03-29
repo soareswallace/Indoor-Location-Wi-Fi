@@ -1,0 +1,62 @@
+{% include "base.html" %}
+
+<body>
+  <div id="wrapper">
+    <div id="page-wrapper">
+      <div class="row">
+       </div>
+        <div id="page-content">
+        <div class="row">
+          <div class="col-lg-12">
+          <div class="panel panel-primary">
+          <div class="panel-heading">
+              <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Frequência de Visita por mês em 2015</h3>
+          </div>
+          <div class="panel-body">
+              <div class="flot-chart">
+              <div id="myfirstchart" style="height: 250px;">
+                <script>
+                          new Morris.Line({
+                          // ID of the element in which to draw the chart.
+                          element: 'myfirstchart',
+                          parseTime:false,
+                          // Chart data records -- each entry in this array corresponds to a point on
+                          // the chart.
+                          data: [
+                            { month: 'jan',  value: {{ plot.m1}} },
+                            { month: 'fev',  value: {{plot.m2}} },
+                            { month: 'mar',  value: {{plot.m3}} },
+                            { month: 'abr',  value: {{plot.m4}} },
+                            { month: 'maio', value: {{plot.m5}} },
+                            { month:'jun',   value:{{plot.m6}}  },
+                            { month:'jul',   value:{{plot.m7}}  },
+                            { month:'ago',   value:{{plot.m8}}  },
+                            { month:'set',   value:{{plot.m9}}  },
+                            { month:'out',   value:{{plot.m10}} },
+                            { month:'nov',   value:{{plot.m11}} },
+                            { month:'dez',   value:{{plot.m12}} }
+                          ],
+                          // The name of the data record attribute that contains x-values.
+                          xkey: 'month',
+                          // A list of names of data record attributes that contain y-values.
+                          ykeys: ['value'],
+                          // Labels for the ykeys -- will be displayed when you hover over the
+                          // chart.
+                          labels: ['Value']
+                        });                  
+                </script>
+                <div class="flot-chart-content" id="flot-line-chart"></div>
+                </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- /#wrapper -->
+</body>
+
+</html>

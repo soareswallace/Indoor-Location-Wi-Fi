@@ -1,0 +1,194 @@
+<script type="text/javascript">
+    // Highcharts data
+    var data = [];
+    data[0] = {{ plot.ticketporhora|safe }};
+    data[1] = {{ plot.valorporhora|safe }};
+    data[2] = {{ plot.valormedporHora|safe }};
+    data[3] = {{ plot.ticketpormes|safe }};
+    data[4] = {{ plot.valorpormes|safe }};
+    data[5] = {{ plot.valormedpormes|safe }};
+</script>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Quantidade de Vendas por hora durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="my-line-chart1"></div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Valor por hora durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="my-line-chart2"></div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Valor médio por hora durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="my-line-chart3"></div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Quantidade de Vendas por Mês durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="morris-bar-chart1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Valor por Mês durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="morris-bar-chart2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Valor médio por Mês durante o Período</h3>
+                            </div>
+                            <div id="page-year" class ="row">
+                                    <div id="page-hour">
+                                        <div id="morris-bar-chart3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    <div class = "row">
+     <div class="painel-teste">  
+    <div class="col-lg-6">
+            </br>
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-money fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{dados.debito}}%</div>
+                        <div>Compras no débito durante o periodo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+            </br>
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-credit-card  fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{dados.credito}}%</div>
+                        <div>Compras no crédito durante o periodo</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+  Morris.Line({
+    element: 'my-line-chart1',
+    parseTime: false,
+    data:  data[0],
+    xkey: 'hora',
+    ykeys: ['value'],
+    labels: ['Quantidade de Vendas']
+  });            
+  Morris.Line({
+    element: 'my-line-chart2',
+    parseTime: false,
+    data:  data[1],
+    xkey: 'hora',
+    ykeys: ['value'],
+    labels: ['Valor']
+  });            
+  Morris.Line({
+    element: 'my-line-chart3',
+    parseTime: false,
+    data:  data[2],
+    xkey: 'hora',
+    ykeys: ['value'],
+    labels: ['Valor Médio']
+  });            
+  new Morris.Bar({
+  element: 'morris-bar-chart1',
+  parseTime:false,
+  data: data[3],
+  xkey: 'month',
+  ykeys: ['value'],
+  labels: ['Quantidade de Vendas']
+  });                  
+  new Morris.Bar({
+  element: 'morris-bar-chart2',
+  parseTime:false,
+  data: data[4],
+  xkey: 'month',
+  ykeys: ['value'],
+  labels: ['Valor']
+  });                  
+  new Morris.Bar({
+  element: 'morris-bar-chart3',
+  parseTime:false,
+  data: data[5],
+  xkey: 'month',
+  ykeys: ['value'],
+  labels: ['Valor Médio']
+  });
+
+  // var vetor = qtdParcelamentoCredito({{startDate}},{{finalDate}});
+  // var myData = new Array(['x1', vetor[0]], ['x2', vetor[1]], ['x3', vetor[2]], ['x4', vetor[3]], ['x5', vetor[4]], ['x6', vetor[5]], ['x7', vetor[6]], ['x8', vetor[7]], ['x9', vetor[9]], ['x10', vetor[9]], ['x11', vetor[10]], ['x12', vetor[11]]);
+  // var colors = ['#FFCC00', '#FFFF00', '#CCFF00', '#99FF00', '#33FF00', '#00FF66', '#00FF99', '#00FFCC', '#FF0000', '#FF3300', '#FF6600', '#FF9900'];
+  // var myChart = new JSChart('chartid', 'pie');
+  // myChart.setDataArray(myData);
+  // myChart.colorizePie(colors);
+  // myChart.setTitleColor('#857D7D');
+  // myChart.setPieUnitsColor('#9B9B9B');
+  // myChart.setPieValuesColor('#6A0000');
+  // myChart.draw();                  
+</script>

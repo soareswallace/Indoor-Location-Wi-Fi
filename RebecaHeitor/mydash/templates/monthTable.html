@@ -1,0 +1,60 @@
+{% include "base.html" %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Visita(s) Por Dia no Mês {{plot.month}}  {{plot.year}}</h3>
+            </div>
+            <div class="panel-body">
+                <div id="morris-mychart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+new Morris.Line({
+      element: 'morris-mychart',
+      parseTime:false,
+      data: [
+        { dia: '1', value: {{plot.m1}} },
+        { dia: '2', value: {{plot.m2}} },
+        { dia: '3', value: {{plot.m3}} },
+        { dia: '4', value: {{plot.m4}} },
+        { dia: '5', value: {{plot.m5}} },
+        { dia: '6', value: {{plot.m6}} },
+        { dia: '7', value: {{plot.m7}} },
+        { dia: '8', value: {{plot.m8}} },
+        { dia: '9', value: {{plot.m9}} },
+        { dia: '10', value: {{plot.m10}} },
+        { dia: '11', value: {{plot.m11}} },
+        { dia: '12', value: {{plot.m12}} },
+        { dia: '13', value: {{plot.m13}} },
+        { dia: '14', value: {{plot.m14}} },
+        { dia: '15', value: {{plot.m15}} },
+        { dia: '16', value: {{plot.m16}} },
+        { dia: '17', value: {{plot.m17}} },
+        { dia: '18', value: {{plot.m18}} },
+        { dia: '19', value: {{plot.m19}} },
+        { dia: '20', value: {{plot.m20}} },
+        { dia: '21', value: {{plot.m21}} },
+        { dia: '22', value: {{plot.m22}} },
+        { dia: '23', value: {{plot.m23}} },
+        { dia: '24', value: {{plot.m24}} },
+        { dia: '25', value: {{plot.m25}} },
+        { dia: '26', value: {{plot.m26}} },
+        { dia: '27', value: {{plot.m27}} },
+        { dia: '28', value: {{plot.m28}} },
+        { dia: '29', value: {{plot.m29}} },
+        { dia: '30', value: {{plot.m30}} },
+        { dia: '31', value: {{plot.m31}} }
+
+      ],
+      // The name of the data record attribute that contains x-values.
+      xkey: 'dia',
+      // A list of names of data record attributes that contain y-values.
+      ykeys: ['value'],
+      // Labels for the ykeys -- will be displayed when you hover over the
+      // chart.
+      labels: ['Value']
+    });                    
+</script>

@@ -1,0 +1,12 @@
+{% include "base.html" %}
+<div id="morris-bar-chart"></div>
+<script>
+  new Morris.Bar({
+  element: 'morris-bar-chart',
+  parseTime:false,
+  data: data[1],
+  xkey: 'month',
+  ykeys: ['value'],
+  labels: ['Value']
+  });                  
+</script>

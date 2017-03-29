@@ -1,0 +1,94 @@
+ {% include "base.html" %}
+
+<body>
+    <script type="text/javascript">
+    // Highcharts data
+    var data = [];
+    data[0] = {{ plot.data1|safe }};
+    </script>
+<div id="page-content">
+    <div id="wrapper">
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+                 <!-- <div id="loading_div" class="my_modal loading">
+                    <img src="http://www.arabianbusiness.com/skins/ab.main/gfx/loading_spinner.gif" />
+                 </div> -->
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                             Redes mais Acessadas
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <i class="fa fa-dashboard"></i>  <a href="index.html">Dashboard</a>
+                            </li>
+                            <li class="active">
+                                <i class="fa fa-wifi"></i> Redes mais Acessadas
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <script src="https://code.highcharts.com/highcharts.js"></script>
+                <script src="https://code.highcharts.com/modules/exporting.js"></script>
+                <div class="row">
+                <div id="donutChart" class="" ></div>
+                </div>
+                <!-- <div id="my-donut-chart"></div> -->
+                <!-- <div id="graph"></div> -->
+            </div>
+            <!-- /.container-fluid -->
+            
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+$(function() {
+    $('#donutChart').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Redes mais acessada dos celulares dos clientes'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: data[0]
+        }]
+    });
+});
+
+
+</script>
+</html>
+
+
+
+

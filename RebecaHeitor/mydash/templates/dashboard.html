@@ -1,0 +1,60 @@
+ {% include "base.html" %}
+
+<body>
+{% block content %}
+<script type="text/javascript">
+    // Highcharts data
+    var data = [];
+    data[0] = {{ plot.hour|safe }};
+    data[1] = {{ plot.months|safe }};
+    console.log(data[1])
+</script>
+<div id="page-content">
+    <div id="wrapper">
+
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div id="painel-live">
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Dashboard <small>Statistics Overview</small>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li class="active">
+                                <i class="fa fa-dashboard"></i> Dashboard
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class = "panel-live">
+                    {%include "live.html" %}
+                </div>
+                </br>
+                <div id= "tabela-mac">
+                 {%include "tableLive.html" %}
+                </div>
+               
+
+            </div>
+            </div>
+            <!-- /.container-fluid -->
+
+        <!-- /#page-wrapper -->
+
+    
+    <!-- /#wrapper -->
+    </div>
+</div>
+    {% endblock %}
+</body>
+
+
+</html>
+
+<script type="text/javascript">
+setInterval(function () {
+    (getPage("/visitors/"),null,"#painel-live",[],[]);
+}, 1*60000);
+</script>

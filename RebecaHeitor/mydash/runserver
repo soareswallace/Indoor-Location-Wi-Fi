@@ -1,0 +1,2 @@
+#!/bin/bash
+exec ./manage.py runserver 172.28.146.85:8000

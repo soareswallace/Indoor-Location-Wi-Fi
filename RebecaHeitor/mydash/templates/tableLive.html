@@ -1,0 +1,52 @@
+<div class="row">
+<div class="col-lg-6 col-md-12">
+<div class="panel panel-primary">
+    <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-user-plus  fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{totalNew}}</div>
+                        <div>Novas pessoas</div>
+                    </div>
+                </div>
+    </div>
+    <div style="max-height:200px; overflow:auto;">
+    {% for mac_novo in plot.novo %}
+        <a href="/showMac/{{mac_novo}}">
+                <span class="pull-left" style="color: primary">{{mac_novo}}</span>
+                <span class="pull-right"><i class="fa fa-user-plus fa-2x" style="color: primary"></i></span>
+                <div class="clearfix"></div>
+        </a>
+    {% endfor %}
+    </div>
+</div>
+</div>
+<div class="col-lg-6 col-md-12">
+<div class="panel panel-red">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-heart -cart fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{totalOld}}</div>
+                        <div>Pessoas estão de volta</div>
+                    </div>
+                </div>
+            </div>
+    <div style="max-height:200px; overflow:auto;">
+    {% for mac_velho in plot.velhos %}
+        <a href="/showMac/{{mac_velho}}">
+                <span class="pull-left" style="color: red">{{mac_velho}}</span>
+                <span class="pull-right"><i class="fa fa-heart fa-2x" style="color: red"></i></span>
+                <div class="clearfix"></div>
+        </a>
+    {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+</div>
+</br>

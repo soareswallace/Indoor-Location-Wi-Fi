@@ -1,0 +1,10 @@
+{% for client in client_list %}		
+		<div style="margin-bottom: 20px;">
+			Cliente: 
+			<h4>{{ client.mac }}</h4>
+			<h4>{{ client.dia }}</h4>
+			<h4>{{ client.riot }}</h4>
+			<h4>{{ client.power }}</h4>
+		</div>
+	{% endfor %}
+

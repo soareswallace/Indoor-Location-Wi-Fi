@@ -1,0 +1,150 @@
+ {% include "base.html" %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script>
+  $(function() {
+    $( "#id_inicial" ).datepicker({ 
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        nextText: 'Próximo',
+        prevText: 'Anterior'
+    });
+  });
+  $(function() {
+    $( "#id_final" ).datepicker({
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        nextText: 'Próximo',
+        prevText: 'Anterior'
+    });
+  });
+  </script>
+</head>
+</html>
+
+<body>
+{% block content %}
+
+<div id="page-content">
+    <div id="wrapper">
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Dados sobre as visitas a sua loja
+                            <!-- <small>Subheading</small> -->
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <i class="fa fa-dashboard"></i>  <a href="/visitors/">Dashboard</a>
+                            </li>
+                            <li class="active">
+                                <i class="fa fa-file"></i> Dados de visitas
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-pie-chart"></i>Dados de um Periodo</h3>
+                            </div>
+                            <div class="panel-body">
+                            <form action="http://www.mydomain.com/myformhandler.cgi" method="post">
+                                {% csrf_token %}
+                                {{ form.non_field_errors }}
+                                <div class="fieldWrapper">
+                                    <div style="color:#151313;">
+                                    {{ form.inicial.errors }}
+                                    <label for="id_inicial" maxlength="15">Inicio: </label>
+                                    {{ form.inicial }}
+                                    <!-- </br> -->
+                                    {{ form.final.errors }}
+                                    <label for="id_final">Fim:</label>
+                                    {{ form.final }}
+                                    <select id="mydropdown">
+                                    <option value= 7 style="color: black">Todos os dias</option>
+                                    <option value= 6 style="color: black">Domingo</option>
+                                    <option value= 0 style="color: black">Segunda</option>
+                                    <option value= 1 style="color: black">Terça</option>
+                                    <option value= 2 style="color: black">Quarta</option>
+                                    <option value= 3 style="color: black">Quinta</option>
+                                    <option value= 4 style="color: black">Sexta</option>
+                                    <option value= 5 style="color: black">Sábado</option>
+                                    </select>
+                                    <!-- </br> -->
+                                    <button type="submit" id="showperiods" class="btn btn-xs btn-primary">Mostrar
+                                    </button>
+                                </div>
+                            </form>
+                             </div>
+                        </div>
+                    </div>
+                
+
+
+            <div id="page-period">
+
+            </div>
+            </div> 
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    </div>
+    {% endblock %}
+</body>
+
+</html>
+
+
+<script>
+    $(document).ready(function() {
+           $("#showperiods").click(function(event){
+                event.preventDefault();
+                setHeader()
+                $.ajax({
+                     type:"POST",
+                     url:"/visitors/postPeriod/",
+                     global: false,
+                     data: {'initalPeriod': $("#id_inicial").val(),
+                            'endPeriod':$("#id_final").val(),
+                            'tipoBusca': $("#mydropdown").val()},
+                     dataType: "json",
+                     success: function(data){
+                         if(data.status == 1){
+                            activate_loading()
+                            clickforPeriod(data.startDate,data.finalDate,data.tipoBusca)
+                         }
+                     }
+                });
+            return false;
+           });
+
+    });
+</script>
