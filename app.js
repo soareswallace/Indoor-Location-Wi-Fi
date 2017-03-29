@@ -148,8 +148,8 @@ function addDevice(newEsp){
 
     function distFromSignalAp1(level) {
 
-        const A = -40; //dBm 1m of distance 
-        const n = 1.8598; // constante de propagação no meio.
+        const A = -56; //dBm 1m of distance 
+        const n = 1.287; // constante de propagação no meio.
         var rssi = level;
         console.log("level: " + level);
         var aux = (rssi - A) / (-10 * n);
@@ -161,8 +161,8 @@ function addDevice(newEsp){
 
     function distFromSignalAp2(level) {
 
-        const A = -26; //dBm 1m of distance 
-        const n = 3.353; // constante de propagação no meio.
+        const A = -41; //dBm 1m of distance 
+        const n = 2.432; // constante de propagação no meio.
         var rssi = level;
         console.log("level: " + level);
         var aux = (rssi - A) / (-10 * n);
@@ -174,8 +174,8 @@ function addDevice(newEsp){
 
     function distFromSignalAp3(level) {
 
-        const A = -42; //dBm 1m of distance 
-        const n = 2.7// constante de propagação no meio.
+        const A = -40; //dBm 1m of distance 
+        const n = 2.003// constante de propagação no meio.
         var rssi = level;
 
         console.log("level: " + level);
@@ -275,6 +275,9 @@ io.on('connection', function(socket){
             addDevice(newEsp);  
 
             var query = {"mac": "18:FE:34:D6:EA:8E"};
+
+
+            
             Device.findOne(query, function(err, data){
                 if(err){
                     console.log(err);
@@ -282,8 +285,9 @@ io.on('connection', function(socket){
                 else{
                     output = positionInMap(data.Distance_para_o_Ap1,data.Distance_para_o_Ap2,data.Distance_para_o_Ap3);
                     var fakepoint = [];
-                    fakepoint.push(100);
-                    fakepoint.push(100);
+                    fakepoint.push(340);
+                    fakepoint.push(150);
+                    console.log("Outpu: " + output);
                     if(output[0] != 0 && output[1] != 0){
                         console.log("\n" + output + "\n");
                         io.emit('chat message', output);
@@ -293,8 +297,13 @@ io.on('connection', function(socket){
                     console.log("Comando: " + comando + "\nContador: " + cont);
                     socket.emit('comando', comando);
                     cont++;
-                    if(distanceBetweenTwoPoints(fakepoint, output)<150){
+                    if(distanceBetweenTwoPoints(fakepoint, output)<300){
                         comando = '1';
+                        console.log("Comando: " + comando);
+                        cont = 0;
+                    }
+                    if(distanceBetweenTwoPoints(fakepoint, output)>300){
+                        comando = '0';
                         console.log("Comando: " + comando);
                         cont = 0;
                     }
@@ -308,7 +317,6 @@ io.on('connection', function(socket){
         }
         else{
             socket.emit('comando', comando);
-            comando = '0';
         }
   });
 });
