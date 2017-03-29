@@ -1,0 +1,44 @@
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script src="js/jquery.tablesorter.min.js"></script> 
+    
+	<script>
+
+    $(document).ready(function() {
+    	
+        $("rect,path,polygon,polyline").mouseover(function() {
+        	var nomeSecao = this.getAttribute("data-name");
+        	
+        	// console.dir(nomeSecao);
+      		$( "div.section-name" ).text(nomeSecao);
+    	});
+    	
+    	$("#eduardo").click(function() {
+    		var pos1 = setTimeout(function(){	$( "#eduardo" ).css({ top: "51%", left: "44%" });	}, 1000);
+    		var pos2 = setTimeout(function(){	$( "#eduardo" ).css({ top: "53%", left: "59%" });	}, 2000);
+    		var pos3 = setTimeout(function(){	$( "#eduardo" ).css({ top: 201, left: 970 });	}, 3000);
+    		var pos4 = setTimeout(function(){	$( "#eduardo" ).css({ top: 221, left: 1100 });	}, 4000);
+    		var pos5 = setTimeout(function(){	$( "#eduardo" ).css({ top: 281, left: 1091 });	}, 5000);
+    	});
+    	
+    	$("#colaboradoresTable").tablesorter({ 
+            sortList: [[4,1]] 
+        });
+        
+    });
+    </script>
+
+    <script src="js/moment-with-locales.js"></script>
+
+
+    <script>
+        moment().format();
+    </script>
+  </body>
+
+</body>
+</html>

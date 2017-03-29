@@ -1,0 +1,91 @@
+<% include partials/header %>
+
+    	
+<style>
+
+
+    form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+
+
+.caixa {
+	display: block;
+	width: 800px;
+	height: 1100px;
+	background: #fff;
+	position: relative;
+}
+
+.ap {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin-top: -8px;
+	margin-left: -8px;
+	border-radius: 50%;
+	background: blue;
+	position: absolute;
+}
+
+.esp {
+	display: block;
+	width: 8px;
+	height: 8px;
+	margin-top: -4px;
+	margin-left: -4px;
+	border-radius: 50%;
+	background: red;
+	position: absolute;
+}
+
+.fakepoint {
+	display: block;
+	width: 8px;
+	height: 8px;
+	margin-top: 500px;
+	margin-left: 300px;
+	border-radius: 50%;
+	background: green;
+	position: absolute;
+}
+
+#ap3 { top: 0px; left: 0px; }
+#ap2 { top: 130px; left: 635px; }
+#ap1 { top: 940px; left: 750px; }
+
+</style>
+
+<ul id="messages"></ul>
+
+<div class="caixa">
+	<div class="ap" id="ap1"></div>
+	<div class="ap" id="ap2"></div>
+	<div class="ap" id="ap3"></div>
+	<div class="fakepoint"></div>
+	<div class="esp"></div>
+
+
+</div>
+	
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+
+      socket.on('chat message', function(msg){
+      	console.log(Math.round(msg[1]));
+      	console.log(Math.round(msg[0]));
+
+        $(".esp").css({"top": Math.round(msg[1]), "left": Math.round(msg[0])});
+
+      });
+    </script>		
+		
+
+
+
+<% include partials/footer %>

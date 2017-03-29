@@ -1,0 +1,19 @@
+{
+  "name": "gerdaulocatorserver",
+  "version": "0.1.0",
+  "description": "Servidor de processamento de geolocalização da Gerdau (Developed by Dudu Roxius, Wally Wally, Gabi Gaiata @ CESAR Summer Jobs 2017)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eduardo Roxius, Wallace Soares, Gabriella Alencar",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.1",
+    "moment": "^2.17.1",
+    "mongoose": "^4.8.1",
+    "socket.io": "^1.7.2",
+    "trilat": "^1.0.0"
+  }
+}

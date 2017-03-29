@@ -1,0 +1,72 @@
+<% include partials/header %>
+    	
+<style>
+.caixa {
+	display: block;
+	width: 800px;
+	height: 1100px;
+	background: gray;
+	position: relative;
+}
+
+.ap {
+	display: block;
+	width: 10px;
+	height: 10px;
+	margin-top: -5px;
+	margin-left: -5px;
+	border-radius: 50%;
+	background: blue;
+	position: absolute;
+}
+
+#ap1 { top: 200px; left: 40px; }
+#ap2 { top: 130px; left: 635px; }
+#ap3 { top: 940px; left: 750px; }
+
+</style>
+
+<%
+var input = [
+//      X     	Y     	R 
+    [ 0.0,  	0.0, 	200.0],
+    [400.0, 	400.0, 	200.0],
+    [400.0,  	0.0, 	200.0]
+];
+ 
+var output = trilat(input);
+%>
+
+<div class="caixa">
+	<div class="ap" id="ap1"></div>
+	<div class="ap" id="ap2"></div>
+	<div class="ap" id="ap3"></div>
+
+
+</div>
+
+
+<script>
+
+// var top = <%=Math.round(output[1])%>;
+// var left = <%=Math.round(output[0])%>;
+
+console.log(<%=output[0]%>);
+console.log(<%=output[1]%>);
+
+console.log(<%=Math.round(output[0])%>);
+console.log(<%=Math.round(output[1])%>);
+
+
+$(document).ready(function() {
+	//$(".ap#1").css({"top": <%=Math.round(output[1])%>, "left": <%=Math.round(output[0])%>});
+});
+
+
+</script>		
+		
+		
+
+
+
+<% include partials/footer %>
